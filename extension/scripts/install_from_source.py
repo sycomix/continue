@@ -11,18 +11,15 @@ def get_latest_version() -> str:
     # Ensure build directory exists
     if not os.path.exists("../build"):
         os.mkdir("../build")
-    
+
     def version_tuple(filename):
         version = filename.split("-")[1].split(".vsix")[0]
         return tuple(map(int, version.split(".")))
 
     versions = [file for file in os.listdir("../build") if file.endswith(".vsix")]
-    
+
     # Ensure we have at least one version
-    if len(versions) == 0:
-        return None
-    
-    return max(versions, key=version_tuple)
+    return None if not versions else max(versions, key=version_tuple)
 
 def main():
     # Clear out old stuff

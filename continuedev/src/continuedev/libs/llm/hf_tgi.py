@@ -37,14 +37,14 @@ class HuggingFaceTGI(LLM):
         args = self.collect_args(options)
 
         async with aiohttp.ClientSession(
-            connector=aiohttp.TCPConnector(verify_ssl=self.verify_ssl),
-            timeout=aiohttp.ClientTimeout(total=self.timeout),
-        ) as client_session:
+                connector=aiohttp.TCPConnector(verify_ssl=self.verify_ssl),
+                timeout=aiohttp.ClientTimeout(total=self.timeout),
+            ) as client_session:
             async with client_session.post(
-                f"{self.server_url}/generate_stream",
-                json={"inputs": prompt, "parameters": args},
-                headers={"Content-Type": "application/json"},
-            ) as resp:
+                        f"{self.server_url}/generate_stream",
+                        json={"inputs": prompt, "parameters": args},
+                        headers={"Content-Type": "application/json"},
+                    ) as resp:
                 async for line in resp.content.iter_any():
                     if line:
                         chunk = line.decode("utf-8")
@@ -53,7 +53,6 @@ class HuggingFaceTGI(LLM):
                         except Exception as e:
                             print(f"Error parsing JSON: {e}")
                             continue
-                        text = json_chunk["details"]["best_of_sequences"][0][
+                        yield json_chunk["details"]["best_of_sequences"][0][
                             "generated_text"
                         ]
-                        yield text

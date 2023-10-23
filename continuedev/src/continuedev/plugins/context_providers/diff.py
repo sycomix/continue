@@ -41,7 +41,7 @@ class DiffContextProvider(ContextProvider):
         return [self.BASE_CONTEXT_ITEM]
 
     async def get_item(self, id: ContextItemId, query: str) -> ContextItem:
-        if not id.provider_title == self.title:
+        if id.provider_title != self.title:
             raise Exception("Invalid provider title for item")
 
         diff = subprocess.check_output(["git", "diff"], cwd=self.workspace_dir).decode(

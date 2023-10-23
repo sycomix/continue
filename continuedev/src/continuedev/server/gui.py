@@ -85,50 +85,50 @@ class GUIProtocolServer:
         return self.session.autopilot.continue_sdk.run_step(DisplayErrorStep(e=e))
 
     def handle_json(self, message_type: str, data: Any):
-        if message_type == "main_input":
-            self.on_main_input(data["input"])
-        elif message_type == "step_user_input":
-            self.on_step_user_input(data["input"], data["index"])
-        elif message_type == "refinement_input":
-            self.on_refinement_input(data["input"], data["index"])
-        elif message_type == "reverse_to_index":
-            self.on_reverse_to_index(data["index"])
-        elif message_type == "retry_at_index":
-            self.on_retry_at_index(data["index"])
+        if message_type == "add_model_for_role":
+            self.add_model_for_role(data["role"], data["model_class"], data["model"])
         elif message_type == "clear_history":
             self.on_clear_history()
         elif message_type == "delete_at_index":
             self.on_delete_at_index(data["index"])
+        elif message_type == "delete_context_group":
+            self.delete_context_group(data["id"])
         elif message_type == "delete_context_with_ids":
             self.on_delete_context_with_ids(data["ids"])
-        elif message_type == "toggle_adding_highlighted_code":
-            self.on_toggle_adding_highlighted_code()
-        elif message_type == "set_editing_at_ids":
-            self.on_set_editing_at_ids(data["ids"])
-        elif message_type == "show_logs_at_index":
-            self.on_show_logs_at_index(data["index"])
-        elif message_type == "select_context_item":
-            self.select_context_item(data["id"], data["query"])
-        elif message_type == "load_session":
-            self.load_session(data.get("session_id", None))
         elif message_type == "edit_step_at_index":
             self.edit_step_at_index(data.get("user_input", ""), data["index"])
-        elif message_type == "set_system_message":
-            self.set_system_message(data["message"])
-        elif message_type == "set_temperature":
-            self.set_temperature(float(data["temperature"]))
-        elif message_type == "add_model_for_role":
-            self.add_model_for_role(data["role"], data["model_class"], data["model"])
-        elif message_type == "set_model_for_role_from_index":
-            self.set_model_for_role_from_index(data["role"], data["index"])
+        elif message_type == "load_session":
+            self.load_session(data.get("session_id", None))
+        elif message_type == "main_input":
+            self.on_main_input(data["input"])
+        elif message_type == "refinement_input":
+            self.on_refinement_input(data["input"], data["index"])
+        elif message_type == "retry_at_index":
+            self.on_retry_at_index(data["index"])
+        elif message_type == "reverse_to_index":
+            self.on_reverse_to_index(data["index"])
         elif message_type == "save_context_group":
             self.save_context_group(
                 data["title"], [ContextItem(**item) for item in data["context_items"]]
             )
         elif message_type == "select_context_group":
             self.select_context_group(data["id"])
-        elif message_type == "delete_context_group":
-            self.delete_context_group(data["id"])
+        elif message_type == "select_context_item":
+            self.select_context_item(data["id"], data["query"])
+        elif message_type == "set_editing_at_ids":
+            self.on_set_editing_at_ids(data["ids"])
+        elif message_type == "set_model_for_role_from_index":
+            self.set_model_for_role_from_index(data["role"], data["index"])
+        elif message_type == "set_system_message":
+            self.set_system_message(data["message"])
+        elif message_type == "set_temperature":
+            self.set_temperature(float(data["temperature"]))
+        elif message_type == "show_logs_at_index":
+            self.on_show_logs_at_index(data["index"])
+        elif message_type == "step_user_input":
+            self.on_step_user_input(data["input"], data["index"])
+        elif message_type == "toggle_adding_highlighted_code":
+            self.on_toggle_adding_highlighted_code()
 
     def on_main_input(self, input: str):
         # Do something with user input
@@ -308,9 +308,6 @@ class GUIProtocolServer:
                         models.__setattr__(role, models.default)
 
             create_async_task(async_stuff(), self.on_error)
-        else:
-            # TODO
-            pass
 
     def save_context_group(self, title: str, context_items: List[ContextItem]):
         create_async_task(

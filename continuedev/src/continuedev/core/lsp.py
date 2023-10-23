@@ -16,10 +16,7 @@ def filepath_to_uri(filename: str) -> str:
 
 
 def uri_to_filepath(uri: str) -> str:
-    if uri.startswith("file://"):
-        return uri.lstrip("file://")
-    else:
-        return uri
+    return uri.lstrip("file://") if uri.startswith("file://") else uri
 
 
 PORT = 8099
@@ -57,8 +54,7 @@ class LSPClient:
         }
         self.next_id += 1
         await self.send(body)
-        response = await self.recv()
-        return response
+        return await self.recv()
 
     async def initialize(self):
         initialization_args = {
